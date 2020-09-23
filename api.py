@@ -3,7 +3,7 @@ import nltk
 import numpy as np
 from nltk.corpus import wordnet
 from googletrans import Translator
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, render_template
 
 
 app = Flask(__name__)
@@ -21,24 +21,36 @@ def random():
 
     word = np.random.choice(words, 1)[0]
 
-    tranlation = translator.translate(word, dest="fa").text
+    translation = translator.translate(word, dest="fa").text
 
     synonyms = []
-    for syn in wordnet.synsets(word):
-        for lm in syn.lemmas():
-            synonyms.append(lm.name())
+    try:
+        for syn in wordnet.synsets(word):
+            for lm in syn.lemmas():
+                synonyms.append(lm.name())
 
-    synonyms = list(set(synonyms))
+        synonyms = list(set(synonyms))
+    except:
+        pass
 
     antonyms = []
-    for syn in wordnet.synsets(word):
-        for lm in syn.lemmas():
-            if lm.antonyms():
-                antonyms.append(lm.antonyms()[0].name())
+    try:
+        for syn in wordnet.synsets(word):
+            for lm in syn.lemmas():
+                if lm.antonyms():
+                    antonyms.append(lm.antonyms()[0].name())
 
-    antonyms = list(set(antonyms))
+        antonyms = list(set(antonyms))
+    except:
+        pass
 
-    return render_template("index.html", word=word)
+    return render_template(
+        "index.html",
+        word=word,
+        translation=translation,
+        synonyms=synonyms,
+        antonyms=antonyms,
+    )
 
 
 if __name__ == "__main__":
