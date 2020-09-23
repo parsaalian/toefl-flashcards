@@ -54,5 +54,7 @@ def random():
 
 
 if __name__ == "__main__":
+    from waitress import serve
+
     nltk.download("wordnet")
-    app.run(port=5000)
+    serve(app, listen="0.0.0.0:5000")
